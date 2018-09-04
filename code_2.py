@@ -77,6 +77,7 @@ from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(y_test, y_pred)
 print(cm)
 
+#--------_Addition in the code----
 # K Fold Validation 
 from sklearn.model_selection import StratifiedKFold
 seed = 7
@@ -92,11 +93,29 @@ for train, test in kfold.split(X, y):
 	# Compile model
 	model.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
 	# Fit the model
-	model.fit(X_train, y_train, epochs=15, batch_size=10, verbose=0)
+	history=model.fit(X_train, y_train, validation_split=0.33,epochs=15, batch_size=10, verbose=0)
 	# Evaluate the model
 	scores = model.evaluate(X_test, y_test, verbose=0)
 	print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 	cvscores.append(scores[1] * 100)
 print("%.2f%% (+/- %.2f%%)" % (np.mean(cvscores), np.std(cvscores)))
-
+print("The cvscores are:",cvscores)
+print("The history is: ")
+print(history.history.keys())
+# summarize history for accuracy
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+# summarize history for loss
+'''plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()'''
 
